@@ -1,7 +1,8 @@
-"""Launcher script — avoids uvicorn --reload triggering Path.cwd() on OneDrive."""
+"""Launcher script — avoids uvicorn --reload triggering Path.cwd() issues."""
 import sys
+import os
 
-PROJECT = "/Users/saraithong/Library/CloudStorage/OneDrive-Personal/Saraithong Code/Test"
+PROJECT = os.path.dirname(os.path.abspath(__file__))
 if PROJECT not in sys.path:
     sys.path.insert(0, PROJECT)
 

@@ -310,6 +310,9 @@ export const api = {
   deleteBatch: (id: number) =>
     request<void>(`/batches/${id}`, { method: 'DELETE' }),
 
+  discardBatchRecord: (batchId: number, recordId: number) =>
+    request<BatchRecord>(`/batches/${batchId}/records/${recordId}/discard`, { method: 'POST' }),
+
   exportBatchExcel(id: number) {
     const token = localStorage.getItem('token') || ''
     return `${BASE}/batches/${id}/export-excel?token=${token}`

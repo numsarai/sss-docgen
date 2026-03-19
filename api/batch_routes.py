@@ -386,6 +386,40 @@ def generate_all(
 
 
 # ---------------------------------------------------------------------------
+# POST /batches/{id}/records/{rid}/discard  — reset generated record back to draft
+# ---------------------------------------------------------------------------
+
+@router.post("/batches/{batch_id}/records/{record_id}/discard",
+             response_model=BatchRecordResponse,
+             summary="Discard generated preview — deletes associated case, resets to draft")
+def discard_record(
+    batch_id:  int,
+    record_id: int,
+    db:        Session = Depends(get_db),
+):
+    """
+    Remove the generated preview for a single batch record.
+    - Deletes the associated CaseRecord (docx + pdf files stay on disk for now)
+    - Resets BatchRecord.status back to "draft" (or "edited" if it was edited)
+    - Clears case_id
+    """
+    rec = _get_record_or_404(db, batch_id, record_id)
+
+    if rec.case_id:
+        case = db.get(CaseRecord, rec.case_id)
+        if case:
+            db.delete(case)
+
+    # Reset: go back to "edited" if variables were modified, else "draft"
+    rec.status  = "edited" if rec.status in ("generated",) and rec.case_id else "draft"
+    rec.case_id = None
+    rec.status  = "draft"     # always full reset so user can re-generate
+    db.commit()
+    db.refresh(rec)
+    return BatchRecordResponse.from_record(rec)
+
+
+# ---------------------------------------------------------------------------
 # DELETE /batches/{id}
 # ---------------------------------------------------------------------------
 

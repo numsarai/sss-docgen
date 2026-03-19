@@ -1,0 +1,35 @@
+# Environment — never commit secrets
+.env
+.env.*
+!.env.example
+
+# Database (contains case data)
+*.db
+*.sqlite
+
+# Generated output files (case documents)
+generated/
+output/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+
+# Node
+ui/node_modules/
+ui/dist/
+ui/.vite/
+
+# macOS
+.DS_Store
+
+# Claude Code local settings (contains local paths)
+.claude/
+
+# Docker volumes / local data
+docker/data/

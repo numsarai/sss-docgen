@@ -1,0 +1,18 @@
+FROM python:3.9-slim
+
+# Install system dependencies (LibreOffice for PDF generation)
+RUN apt-get update && apt-get install -y \
+    libreoffice \
+    fonts-tlwg-garuda fonts-tlwg-kinnari \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY api /app/api
+COPY docx_engine /app/docx_engine
+
+EXPOSE 8000
+CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
